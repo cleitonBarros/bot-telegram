@@ -70,7 +70,6 @@ link_filter = filters.create(has_link)
     #         if retry != 's':
     #             break
 
-print( 450 // 60)
 async def video_downloader(client, message, video_link):
     try:
         await message.reply("📥 Verificando vídeo...")
