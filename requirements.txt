@@ -4,3 +4,4 @@ pyrogram
 tgcrypto
 pytubefix
 python-dotenv
+flask
