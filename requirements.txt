@@ -1,1 +1,6 @@
 gunicorn
+pathlib
+pyrogram
+tgcrypto
+pytubefix
+python-dotenv

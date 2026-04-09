@@ -6,6 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from pyrogram import Client, filters
 
+
 load_dotenv()
 
 # Configuração de diretórios
@@ -28,47 +29,6 @@ def has_link(_, __, message):
     return False
 
 link_filter = filters.create(has_link)
-
-# async def video_downloader(message_text):
-    # while True:
-    #     video_link = message_text.strip()
-        
-    #     # Validação corrigida
-    #     if not video_link.startswith("https://"):
-    #         print("Link inválido! Use um link do YouTube válido (https://...)")
-    #         continue
-            
-    #     try:
-    #         print("Downloading...")
-    #         video_url = YouTube(video_link, on_progress_callback=on_progress)
-    #         print(f"Título: {video_url.title}")
-    #         print(f"Duração: {video_url.length} segundos")
-            
-    #         # Mostrar resoluções disponíveis
-    #         print("\nResoluções disponíveis:")
-    #         streams = video_url.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc()
-            
-    #         for i, stream in enumerate(streams, 1):
-    #             print(f"{i}. {stream.resolution} - {stream.fps}fps - {round(stream.filesize / (1024*1024), 2)}MB")
-            
-    #         video = video_url.streams.get_highest_resolution()
-            
-    #         print(f"\n📥 Baixando em {video.resolution}...")
-    #         path_to_download = r'C:\Users\cleit\Downloads'
-            
-    #         print(f"Baixando para: {path_to_download}")
-    #         video.download(output_path="videos")
-            
-    #         print("✓ Video Downloaded Successfully!")
-    #         startfile(r"C:\Users\cleit\Downloads")
-    #         break
-            
-    #     except Exception as e:
-    #         print(f"Erro ao baixar vídeo: {str(e)}")
-    #         print(f"Tipo do erro: {type(e).__name__}")
-    #         retry = input("Tentar outro link? (s/n): ").lower()
-    #         if retry != 's':
-    #             break
 
 async def video_downloader(client, message, video_link):
     try:
