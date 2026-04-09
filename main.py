@@ -1,4 +1,5 @@
 import os
+import asyncio
 from os import getenv
 from pytubefix import YouTube
 from pytubefix.cli import on_progress
@@ -23,6 +24,11 @@ web_app = Flask(__name__)
 @web_app.route("/")
 def home():
     return "Bot está rodando!"
+
+
+@web_app.route("/health")
+def health():
+    return "ok", 200
 
 # Bot Telegram
 app = Client(
@@ -81,6 +87,8 @@ async def handle_message(client, message):
 
 # 🔥 roda bot em paralelo
 def run_bot():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     app.run()
 
 if __name__ == "__main__":
