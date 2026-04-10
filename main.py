@@ -48,7 +48,24 @@ link_filter = filters.create(has_link)
 async def video_downloader(client, message, video_link):
     try:
         await message.reply("📥 Verificando vídeo...")
-        video_url = YouTube(video_link, on_progress_callback=on_progress)
+
+        # 🔥 Fallback automático (WEB → ANDROID)
+        try:
+            video_url = YouTube(
+                video_link,
+                on_progress_callback=on_progress,
+                client="WEB"
+            )
+        except Exception:
+            try:
+                video_url = YouTube(
+                    video_link,
+                    on_progress_callback=on_progress,
+                    client="ANDROID"
+                )
+            except Exception as e:
+                await message.reply(f"❌ Erro ao acessar vídeo: {str(e)}")
+                return
 
         if video_url.length > 450:
             await message.reply(
@@ -61,7 +78,9 @@ async def video_downloader(client, message, video_link):
 
         await message.reply("📥 Baixando vídeo...")
 
-        video = video_url.streams.get_highest_resolution()
+        # 🔥 melhoria: evita erro em streams separados
+        video = video_url.streams.filter(progressive=True).get_highest_resolution()
+
         downloaded_file = video.download(output_path=str(VIDEO_DIR))
 
         await message.reply("🔄 Convertendo! Pode levar alguns minutos...")
@@ -76,23 +95,25 @@ async def video_downloader(client, message, video_link):
     except Exception as e:
         await message.reply(f"❌ Erro ao baixar: {str(e)}")
 
+
 @app.on_message(link_filter)
 async def link_handler(client, message):
     await video_downloader(client, message, message.text)
 
-@app.on_message()
+@app.on_message(~link_filter)
 async def handle_message(client, message):
     print(message.chat.username, message.text)
     await message.reply("Mensagem recebida nao é um link, por favor envie um link!")
 
-# 🔥 roda Flask em paralelo
-def run_flask():
-    port = int(os.environ.get("PORT", 10000))
-    web_app.run(host="0.0.0.0", port=port)
+# 🔥 roda bot em paralelo
+def run_bot():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    app.run()
 
 if __name__ == "__main__":
-    # Flask em thread, bot na main (precisa de signals)
-    threading.Thread(target=run_flask, daemon=True).start()
-    
-    # Bot roda na main thread
-    app.run()
+    threading.Thread(target=run_bot).start()
+
+    # porta dinâmica do Render
+    port = int(os.environ.get("PORT", 10000))
+    web_app.run(host="0.0.0.0", port=port)
