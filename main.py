@@ -85,15 +85,14 @@ async def handle_message(client, message):
     print(message.chat.username, message.text)
     await message.reply("Mensagem recebida nao é um link, por favor envie um link!")
 
-# 🔥 roda bot em paralelo
-def run_bot():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    app.run()
-
-if __name__ == "__main__":
-    threading.Thread(target=run_bot).start()
-
-    # porta dinâmica do Render
+# 🔥 roda Flask em paralelo
+def run_flask():
     port = int(os.environ.get("PORT", 10000))
     web_app.run(host="0.0.0.0", port=port)
+
+if __name__ == "__main__":
+    # Flask em thread, bot na main (precisa de signals)
+    threading.Thread(target=run_flask, daemon=True).start()
+    
+    # Bot roda na main thread
+    app.run()
